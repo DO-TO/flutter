@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const Dropdown(),
+            const ExpansionTileSample(),
           ],
         ),
       ),
@@ -111,6 +112,46 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+// List Expansion title with dinamicly generated list of items with checkboxes
+class ExpansionTileSample extends StatefulWidget {
+  const ExpansionTileSample({super.key});
+
+  @override
+  State<ExpansionTileSample> createState() => _ExpansionTileSampleState();
+}
+
+class _ExpansionTileSampleState extends State<ExpansionTileSample> {
+  List<bool> _checked = <bool>[false, false, false, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ExpansionTile'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ExpansionTile(
+            title: const Text('List Expansion Tile'),
+            children: <Widget>[
+              for (int i = 0; i < _checked.length; i++)
+                CheckboxListTile(
+                  title: Text('Item $i'),
+                  value: _checked[i],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _checked[i] = value!;
+                    });
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
