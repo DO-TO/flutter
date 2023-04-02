@@ -95,6 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const Dropdown(),
+            const ExpansionTileSample(),
           ],
         ),
       ),
@@ -107,3 +109,83 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 */
+
+// List Expansion title with dinamicly generated list of items with checkboxes
+class ExpansionTileSample extends StatefulWidget {
+  const ExpansionTileSample({super.key});
+
+  @override
+  State<ExpansionTileSample> createState() => _ExpansionTileSampleState();
+}
+
+class _ExpansionTileSampleState extends State<ExpansionTileSample> {
+  List<bool> _checked = <bool>[false, false, false, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ExpansionTile'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ExpansionTile(
+            title: const Text('List Expansion Tile'),
+            children: <Widget>[
+              for (int i = 0; i < _checked.length; i++)
+                CheckboxListTile(
+                  title: Text('Item $i'),
+                  value: _checked[i],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _checked[i] = value!;
+                    });
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+// This widget shows a dropdown menu that allows the user to select between a, b and c
+class Dropdown extends StatefulWidget {
+  const Dropdown({super.key});
+
+  @override
+  State<Dropdown> createState() => _DropdownState();
+}
+
+class _DropdownState extends State<Dropdown> {
+  String dropdownValue = 'a';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      style: const TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+        });
+      },
+      items: <String>['a', 'b', 'c']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}
