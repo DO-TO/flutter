@@ -1,3 +1,4 @@
+import 'package:do_to/model/task/task_composite.dart';
 import 'package:do_to/model/task/task_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -20,17 +21,23 @@ class _TaskScreenState extends State<TaskScreen> {
     });
   }
 
+  void addTaskGroup() {
+    setState(() {
+      taskManager.add(TaskComposite());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
           //todo: display the tasks using composite pattern for the widgets as well.
-          children: taskManager.getChildren().map((task) => Text(task.getName())).toList(),
+          children: taskManager.getChildren().map((task) => task.getTaskComponentView()).toList(),
       ),
       
 
         floatingActionButton: FloatingActionButton(
-          onPressed: addTask,
+          onPressed: addTaskGroup,
           tooltip: 'Add',
           child: const Icon(Icons.add),
         ),

@@ -1,5 +1,8 @@
 import 'package:do_to/model/task/task_component.dart';
 
+import '../../view / task/task_component_view.dart';
+import '../../view / task/task_leaf_view.dart';
+
 class TaskLeaf extends TaskComponent {
   // The leaf of the task composite pattern
 
@@ -28,8 +31,25 @@ class TaskLeaf extends TaskComponent {
   }
 
   @override
+  void incrementProgress(int progress) {
+    // increment the progress of the leaf
+    if (this.progress + progress > TaskComponent.MAX_PROGRESS) {
+      this.progress = TaskComponent.MAX_PROGRESS;
+    } else if (this.progress + progress < TaskComponent.MIN_PROGRESS) {
+      this.progress = TaskComponent.MIN_PROGRESS;
+    } else {
+      this.progress += progress;
+    }
+  }
+
+  @override
   List<TaskComponent> getChildren() {
     // return an empty list
     return [];
+  }
+
+  @override
+  TaskComponentView getTaskComponentView() {
+    return TaskLeafView(task: this);
   }
 }
