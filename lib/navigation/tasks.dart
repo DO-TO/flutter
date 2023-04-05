@@ -1,7 +1,9 @@
 import 'package:do_to/model/task/task_composite.dart';
 import 'package:do_to/model/task/task_manager.dart';
+import 'package:do_to/view%20/util/input_request.dart';
 import 'package:flutter/material.dart';
 
+import '../model/task/task_component.dart';
 import '../model/task/task_leaf.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -16,15 +18,10 @@ class _TaskScreenState extends State<TaskScreen> {
   TaskManager taskManager = TaskManager();
 
   void addTask() {
-    setState(() {
-      taskManager.add(TaskLeaf());
-    });
-  }
-
-  void addTaskGroup() {
-    setState(() {
-      taskManager.add(TaskComposite());
-    });
+    Future<TaskComponent> task = InputRequest.getTaskInput(context: context);
+    task.then((value) => setState(() {
+      taskManager.add(value);
+    }));
   }
 
   @override
@@ -37,7 +34,7 @@ class _TaskScreenState extends State<TaskScreen> {
       
 
         floatingActionButton: FloatingActionButton(
-          onPressed: addTaskGroup,
+          onPressed: addTask,
           tooltip: 'Add',
           child: const Icon(Icons.add),
         ),
