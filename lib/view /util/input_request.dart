@@ -6,10 +6,13 @@ import '../../model/task/task_leaf.dart';
 
 class InputRequest {
 
-  static Future<TaskComponent> getTaskInput({String title = "Create", String message = "Enter a name", required BuildContext context}) async {
+  static Future<TaskComponent?> getTaskInput({String title = "Create", String message = "Enter a name", required BuildContext context}) async {
     final TextEditingController _controller = TextEditingController();
     TaskComponent taskComponent = TaskLeaf();
     TaskComponent leave = TaskLeaf(), group = TaskComposite();
+
+    bool _showError = false;
+
     await showDialog<String>(
       context: context, 
       builder: (BuildContext context){
@@ -22,9 +25,20 @@ class InputRequest {
                     TextField(
                       controller: _controller,
                       decoration: InputDecoration(hintText: message),
+                      onChanged: (value) => {
+                        if (_showError && value.isNotEmpty) {
+                          setState(() => _showError = false)
+                        }
+                      },
                     ),
+                    if (_showError)
+                      const SizedBox(height: 10,),
+                    if (_showError)
+                      const Text(
+                        'Please enter a name',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     // let the user choose whether the task is a leaf or a composite
-                    
                     RadioListTile<TaskComponent>(
                       title: const Text('Task'),
                       value: leave,
@@ -46,11 +60,21 @@ class InputRequest {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                _controller.text = '';
+                Navigator.pop(context);
+              },
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context, _controller.text),
+              onPressed: () {
+                if (_controller.text.isEmpty) {
+                  // Display error message
+                  setState(() => _showError = true);
+                } else {
+                  Navigator.pop(context, _controller.text);
+                }
+              },
               child: const Text('Ok'),
             ),
           ],
@@ -59,6 +83,9 @@ class InputRequest {
         );
       }
     );
+    if (_controller.text.isEmpty) {
+      return null;
+    }
     taskComponent.setName(_controller.text);
     return taskComponent;
     }

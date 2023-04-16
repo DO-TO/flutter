@@ -6,5 +6,5 @@ abstract class TaskComponentView extends StatefulWidget {
 }
 
 abstract class TaskComponentViewState extends State<TaskComponentView> {
-  
+  void update();
 }

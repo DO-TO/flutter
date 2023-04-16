@@ -22,6 +22,7 @@ class _TaskLeafViewState extends TaskComponentViewState {
     setState(() {
       task.incrementProgress(progress);
     });
+    task.notify();
   }
 
   void decrementProgress(int progress) {
@@ -32,6 +33,12 @@ class _TaskLeafViewState extends TaskComponentViewState {
     setState(() {
       task.changeProgress(progress);
     });
+    task.notify();
+  }
+
+  @override
+  void update() {
+    setState(() {});
   }
 
   Row createWidget() {
@@ -63,7 +70,7 @@ class _TaskLeafViewState extends TaskComponentViewState {
       children: [
         const SizedBox(width: 10),
         Expanded(
-          child: Text(task.getName(),
+          child: Text("${task.name} - ${task.getProgress()}/${TaskComponent.MAX_PROGRESS}" ,
             softWrap: true,
             overflow: TextOverflow.clip
           )
@@ -72,6 +79,12 @@ class _TaskLeafViewState extends TaskComponentViewState {
         //Text(task.getProgress().toString()),
         // create gap between the text and the button
         //const Spacer(),
+        IconButton(
+          onPressed: () {
+            decrementProgress(10);
+          },
+          icon: const Icon(Icons.undo),
+        ),
         Expanded(
           flex: 3,
           child: Slider(

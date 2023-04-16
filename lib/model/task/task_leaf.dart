@@ -52,4 +52,10 @@ class TaskLeaf extends TaskComponent {
   TaskComponentView getTaskComponentView() {
     return TaskLeafView(task: this);
   }
+  
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
 }

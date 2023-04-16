@@ -3,29 +3,46 @@ import 'package:do_to/view%20/%20task/task_component_view.dart';
 import 'package:do_to/view%20/util/input_request.dart';
 import 'package:flutter/material.dart';
 
-import '../../model/task/task_composite.dart';
-import '../../model/task/task_leaf.dart';
-
 class TaskCompositeView extends TaskComponentView {
   final TaskComponent component;
   const TaskCompositeView({Key? key, required this.component}) : super(key: key);
 
   @override
   // ignore: no_logic_in_create_state
-  State<TaskComponentView> createState() => _TaskListState(component);
+  State<TaskComponentView> createState() => _TaskCompositeState(component);
 }
 
-class _TaskListState extends TaskComponentViewState {
+class _TaskCompositeState extends TaskComponentViewState {
   TaskComponent taskList;
-  _TaskListState(this.taskList);
+  _TaskCompositeState(this.taskList);
 
   List<TaskComponentView> taskViews = [];
 
   void addTask() {
-    Future<TaskComponent> task = InputRequest.getTaskInput(context: context);
-    task.then((value) => setState(() {
-      taskList.add(value);
-    }));
+    Future<TaskComponent?> task = InputRequest.getTaskInput(context: context);
+
+    task.then(
+      // 
+      (value) => {
+        if (value != null){
+          setState(() => taskList.add(value)),
+          value.subscribe(this)
+        }
+      });
+    taskList.notify();
+  }
+
+  @override
+  void update() {
+    setState(() {});
+    taskList.notify();
+  }
+
+  void deleteTask(TaskComponent task) {
+    setState(() {
+      taskList.remove(task);
+    });
+    taskList.notify();
   }
 
   ExpansionTile getTaskComponentView() {
@@ -59,10 +76,25 @@ class _TaskListState extends TaskComponentViewState {
       tilePadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       //backgroundColor: Color.fromARGB(2, 65, 65, 65),
 
-      onExpansionChanged: (value) => setState((){}),
-      children: taskList.getChildren().map((task) => 
-        Padding(padding: const EdgeInsets.only(left: 16.0),
-              child: task.getTaskComponentView())).toList(),
+
+      children: taskList.getChildren().map((task) {
+        return Dismissible(
+          key: UniqueKey(),
+          onDismissed: (direction) {
+            deleteTask(task);
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: task.getTaskComponentView(),
+          ),
+        );
+
+      }).toList(),
+
+      //onExpansionChanged: (value) => update(),
+      //children: taskList.getChildren().map((task) => 
+        //Padding(padding: const EdgeInsets.only(left: 16.0),
+              //child: task.getTaskComponentView())).toList(),
     );
   }
 
@@ -74,7 +106,7 @@ class _TaskListState extends TaskComponentViewState {
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       //surfaceTintColor: Theme.of(context).cardColor,
-      color: Color.fromARGB(100, 255, 255, 255),
+      color: const Color.fromARGB(100, 255, 255, 255),
       child: getTaskComponentView(),
     );
   }

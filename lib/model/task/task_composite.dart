@@ -8,6 +8,8 @@ class TaskComposite extends TaskComponent {
   // The composite of the task composite pattern
 
   final List<TaskComponent> _taskComponents = [];
+  // ignore: constant_identifier_names
+  static const String TYPE = 'composite';
 
   @override
   int getProgress() {
@@ -52,6 +54,20 @@ class TaskComposite extends TaskComponent {
     for (TaskComponent taskComponent in _taskComponents) {
       taskComponent.incrementProgress(progress);
     }
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    // convert the composite to a json object
+    List<Map<String, dynamic>> taskComponents = [];
+    for (TaskComponent taskComponent in _taskComponents) {
+      taskComponents.add(taskComponent.toJson());
+    }
+    return {
+      'name': name,
+      'type': TYPE,
+      'taskComponents': taskComponents,
+    };
   }
   
   @override

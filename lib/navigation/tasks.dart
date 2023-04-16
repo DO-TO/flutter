@@ -18,10 +18,16 @@ class _TaskScreenState extends State<TaskScreen> {
   TaskManager taskManager = TaskManager();
 
   void addTask() {
-    Future<TaskComponent> task = InputRequest.getTaskInput(context: context);
-    task.then((value) => setState(() {
-      taskManager.add(value);
-    }));
+    Future<TaskComponent?> task = InputRequest.getTaskInput(context: context);
+
+    task.then(
+      // 
+      (value) => {
+        if (value != null){
+          setState(() => taskManager.add(value)),
+        }
+      });
+    taskManager.notify();
   }
 
   @override

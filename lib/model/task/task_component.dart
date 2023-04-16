@@ -9,12 +9,13 @@ abstract class TaskComponent {
   // ignore: constant_identifier_names
   static const int MIN_PROGRESS = 0;
 
+  final List<TaskComponentViewState> _taskComponentViewStates = [];
+
   int getProgress();
   void add(TaskComponent taskComponent);
   void remove(TaskComponent taskComponent);
   void changeProgress(int progress);
   void incrementProgress(int progress);
-  
   List<TaskComponent> getChildren();
 
   String getName(){
@@ -24,6 +25,25 @@ abstract class TaskComponent {
     this.name = name;
   }
 
+  Map<String, dynamic> toJson();
+
   TaskComponentView getTaskComponentView();
+
+  void subscribe(TaskComponentViewState taskComponentViewState) {
+    // subscribe the view state to the children
+    _taskComponentViewStates.add(taskComponentViewState);
+  }
+
+  void unsubscribe(TaskComponentViewState taskComponentViewState) {
+    // unsubscribe the view state from the children
+    _taskComponentViewStates.remove(taskComponentViewState);
+  }
+
+  void notify() {
+    // notify the view states of the children
+    for (TaskComponentViewState taskComponentViewState in _taskComponentViewStates) {
+      taskComponentViewState.update();
+    }
+  }
   
 }
